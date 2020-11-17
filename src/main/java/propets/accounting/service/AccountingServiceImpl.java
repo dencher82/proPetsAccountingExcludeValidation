@@ -48,6 +48,7 @@ public class AccountingServiceImpl implements AccountingService {
 	@Override
 	public ResponseEntity<AccountDto> registerUser(AccountCreateDto accountCreateDto) {
 		if (repository.existsById(accountCreateDto.getEmail())) {
+			System.out.println(repository.findById(accountCreateDto.getEmail()).orElse(null).getEmail());
 			throw new AccountExistsException(accountCreateDto.getEmail());
 		}
 		passwordCheck(accountCreateDto.getPassword());
@@ -59,7 +60,7 @@ public class AccountingServiceImpl implements AccountingService {
 		account.addRole(defaultRole);
 		repository.save(account);
 		AccountDto accountDto = mapper.map(account, AccountDto.class);	
-		String token = tokenService.createToken(account);
+		String token = tokenService.createToken(accountCreateDto);
 		HttpHeaders headers = new HttpHeaders();
 		headers.add(TOKEN_HEADER, token);
 		return new ResponseEntity<AccountDto>(accountDto, headers, HttpStatus.OK);
@@ -189,12 +190,6 @@ public class AccountingServiceImpl implements AccountingService {
 		} else {
 			return account.getFavorites();
 		}
-	}
-
-	@Override
-	// TODO remove method
-	public void tokenValidation(String token) {
-		tokenService.tokenValidation(token);
 	}
 
 }

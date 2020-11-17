@@ -12,11 +12,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import static propets.accounting.configuration.Constants.*;
 import propets.accounting.dto.AccountCreateDto;
 import propets.accounting.dto.AccountDto;
 import propets.accounting.dto.AccountUpdateDto;
@@ -92,11 +90,6 @@ public class AccountingController {
 	@GetMapping("/{login}")
 	public Iterable<String> getUserDate(@PathVariable String login, @PathParam(value = "dataType") boolean dataType) {
 		return accountingService.getUserDate(login, dataType);
-	}
-	
-	@GetMapping("/token/validation")
-	public void tokenValidation(@RequestHeader(TOKEN_HEADER) String token) {
-		accountingService.tokenValidation(token);
 	}
 	
 }

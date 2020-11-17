@@ -1,6 +1,7 @@
 package propets.accounting.service.security.filter;
 
 import java.io.IOException;
+import java.net.URI;
 import java.security.Principal;
 
 import javax.servlet.Filter;
@@ -13,21 +14,30 @@ import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.annotation.Order;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.RequestEntity;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import static propets.accounting.configuration.Constants.*;
 
 import propets.accounting.dao.AccountingRepository;
 import propets.accounting.dto.exception.AccountNotFoundException;
 import propets.accounting.dto.exception.TokenExpiredException;
-import propets.accounting.model.Account;
+import propets.accounting.dto.exception.TokenValidateException;
 import propets.accounting.service.security.AccountingSecurity;
 import propets.accounting.service.security.TokenService;
 
 @Service
 @Order(10)
 public class AuthenticationFilter implements Filter {
+	
+	@Value("${validation.url}")
+	String validationServiceUrl;
 
 	@Autowired
 	AccountingSecurity securityService;
@@ -37,6 +47,9 @@ public class AuthenticationFilter implements Filter {
 
 	@Autowired
 	AccountingRepository repository;
+	
+	@Autowired
+	RestTemplate restTemplate;
 
 	@Override
 	public void doFilter(ServletRequest req, ServletResponse resp, FilterChain chain)
@@ -47,16 +60,31 @@ public class AuthenticationFilter implements Filter {
 		if (!"/account/en/v1/registration".equals(path)) {
 			try {
 				if ("/account/en/v1/login".equals(path)) {
-					String token = request.getHeader("Authorization");
-					String login = securityService.getLogin(token);
-					Account account = repository.findById(login).orElse(null);
-					request = new WrapperRequest(request, login);
-					response.setHeader(TOKEN_HEADER, tokenService.createToken(account));
+					String base64token = request.getHeader("Authorization");
+					HttpHeaders headers = new HttpHeaders();
+					headers.add("Authorization", base64token);
+					try {
+						RequestEntity<String> requestEntity = new RequestEntity<String>(headers, HttpMethod.GET, new URI(validationServiceUrl + "/token/create"));
+						ResponseEntity<String> responseEntity = restTemplate.exchange(requestEntity, String.class);
+						request = new WrapperRequest(request, responseEntity.getBody());
+						response.setHeader(TOKEN_HEADER, responseEntity.getHeaders().getFirst(TOKEN_HEADER));
+					} catch (Exception e) {
+						e.printStackTrace();
+						throw new TokenValidateException();
+					}					
 				} else {
 					String xToken = request.getHeader(TOKEN_HEADER);
-					String login = tokenService.getLogin(xToken);
-					request = new WrapperRequest(request, login);
-					response.setHeader(TOKEN_HEADER, tokenService.tokenValidation(xToken));
+					HttpHeaders headers = new HttpHeaders();
+					headers.add(TOKEN_HEADER, xToken);
+					try {
+						RequestEntity<String> requestEntity = new RequestEntity<String>(headers, HttpMethod.GET, new URI(validationServiceUrl + "/token/validation"));
+						ResponseEntity<String> responseEntity = restTemplate.exchange(requestEntity, String.class);
+						request = new WrapperRequest(request, responseEntity.getBody());
+						response.setHeader(TOKEN_HEADER, responseEntity.getHeaders().getFirst(TOKEN_HEADER));
+					} catch (Exception e) {
+						e.printStackTrace();
+						throw new TokenValidateException();
+					}
 				}
 			} catch (AccountNotFoundException e) {
 				e.printStackTrace();

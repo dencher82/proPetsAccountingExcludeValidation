@@ -45,7 +45,6 @@ public class RolesValidationFilter implements Filter {
 				return;
 			}
 		}
-
 		chain.doFilter(request, response);
 	}
 

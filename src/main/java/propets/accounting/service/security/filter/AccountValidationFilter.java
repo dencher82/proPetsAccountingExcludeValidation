@@ -38,8 +38,7 @@ public class AccountValidationFilter implements Filter {
 				response.sendError(401);
 				return;
 			}
-		}
-		
+		}	
 		chain.doFilter(request, response);
 	}
 

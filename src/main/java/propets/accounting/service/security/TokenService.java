@@ -1,13 +1,9 @@
 package propets.accounting.service.security;
 
-import propets.accounting.model.Account;
+import propets.accounting.dto.AccountCreateDto;
 
 public interface TokenService {
 	
-	String createToken(Account account);
-	
-	String tokenValidation(String token);
-
-	String getLogin(String token);
+	String createToken(AccountCreateDto accountCreateDto);
 	
 }

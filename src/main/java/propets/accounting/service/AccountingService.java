@@ -36,6 +36,4 @@ public interface AccountingService {
 	
 	Set<String> getUserDate(String login, boolean dataType);
 	
-	void tokenValidation(String token);
-	
 }
