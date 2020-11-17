@@ -20,6 +20,7 @@ import propets.accounting.dto.AccountUpdateDto;
 import propets.accounting.dto.exception.AccountExistsException;
 import propets.accounting.dto.exception.AccountNotFoundException;
 import propets.accounting.dto.exception.BadRequestException;
+import propets.accounting.dto.exception.TokenValidateException;
 import propets.accounting.model.Account;
 import propets.accounting.service.security.AccountingSecurity;
 import propets.accounting.service.security.TokenService;
@@ -60,7 +61,14 @@ public class AccountingServiceImpl implements AccountingService {
 		account.addRole(defaultRole);
 		repository.save(account);
 		AccountDto accountDto = mapper.map(account, AccountDto.class);	
-		String token = tokenService.createToken(accountCreateDto);
+		String token;
+		try {
+			token = tokenService.createToken(accountCreateDto);
+		} catch (Exception e) {
+			repository.delete(account);
+			e.printStackTrace();
+			throw new TokenValidateException();
+		}
 		HttpHeaders headers = new HttpHeaders();
 		headers.add(TOKEN_HEADER, token);
 		return new ResponseEntity<AccountDto>(accountDto, headers, HttpStatus.OK);
