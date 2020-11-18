@@ -28,7 +28,6 @@ import static propets.accounting.configuration.Constants.*;
 import propets.accounting.dao.AccountingRepository;
 import propets.accounting.dto.exception.AccountNotFoundException;
 import propets.accounting.dto.exception.TokenExpiredException;
-import propets.accounting.dto.exception.TokenValidateException;
 import propets.accounting.service.security.AccountingSecurity;
 import propets.accounting.service.security.TokenService;
 
@@ -70,7 +69,8 @@ public class AuthenticationFilter implements Filter {
 						response.setHeader(TOKEN_HEADER, responseEntity.getHeaders().getFirst(TOKEN_HEADER));
 					} catch (Exception e) {
 						e.printStackTrace();
-						throw new TokenValidateException();
+						response.sendError(401);
+						return;
 					}					
 				} else {
 					String xToken = request.getHeader(TOKEN_HEADER);
@@ -83,7 +83,8 @@ public class AuthenticationFilter implements Filter {
 						response.setHeader(TOKEN_HEADER, responseEntity.getHeaders().getFirst(TOKEN_HEADER));
 					} catch (Exception e) {
 						e.printStackTrace();
-						throw new TokenValidateException();
+						response.sendError(401);
+						return;
 					}
 				}
 			} catch (AccountNotFoundException e) {
