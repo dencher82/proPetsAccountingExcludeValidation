@@ -29,7 +29,6 @@ import propets.accounting.dao.AccountingRepository;
 import propets.accounting.dto.exception.AccountNotFoundException;
 import propets.accounting.dto.exception.TokenExpiredException;
 import propets.accounting.service.security.AccountingSecurity;
-import propets.accounting.service.security.TokenService;
 
 @Service
 @Order(10)
@@ -40,9 +39,6 @@ public class AuthenticationFilter implements Filter {
 
 	@Autowired
 	AccountingSecurity securityService;
-
-	@Autowired
-	TokenService tokenService;
 
 	@Autowired
 	AccountingRepository repository;
@@ -65,7 +61,7 @@ public class AuthenticationFilter implements Filter {
 					try {
 						RequestEntity<String> requestEntity = new RequestEntity<String>(headers, HttpMethod.GET, new URI(validationServiceUrl + "/token/create"));
 						ResponseEntity<String> responseEntity = restTemplate.exchange(requestEntity, String.class);
-						request = new WrapperRequest(request, responseEntity.getBody());
+						request = new WrapperRequest(request, securityService.getLogin(base64token));
 						response.setHeader(TOKEN_HEADER, responseEntity.getHeaders().getFirst(TOKEN_HEADER));
 					} catch (Exception e) {
 						e.printStackTrace();

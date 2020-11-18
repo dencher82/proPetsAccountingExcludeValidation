@@ -23,7 +23,6 @@ import propets.accounting.dto.exception.BadRequestException;
 import propets.accounting.dto.exception.TokenValidateException;
 import propets.accounting.model.Account;
 import propets.accounting.service.security.AccountingSecurity;
-import propets.accounting.service.security.TokenService;
 
 @Service
 public class AccountingServiceImpl implements AccountingService {
@@ -36,9 +35,6 @@ public class AccountingServiceImpl implements AccountingService {
 
 	@Autowired
 	AccountingSecurity securityService;
-	
-	@Autowired
-	TokenService tokenService;
 
 	@Value("${default.avatar}")
 	private String defaultAvatar;
@@ -63,7 +59,7 @@ public class AccountingServiceImpl implements AccountingService {
 		AccountDto accountDto = mapper.map(account, AccountDto.class);	
 		String token;
 		try {
-			token = tokenService.createToken(accountCreateDto);
+			token = securityService.createToken(accountCreateDto);
 		} catch (Exception e) {
 			repository.delete(account);
 			e.printStackTrace();
