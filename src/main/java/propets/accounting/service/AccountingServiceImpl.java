@@ -159,41 +159,43 @@ public class AccountingServiceImpl implements AccountingService {
 	}
 
 	@Override
-	public void addFavorite(String login, String postId) {
+	public void addFavorite(String login, String postId, String serviceName) {
 		Account account = repository.findById(login).orElseThrow(() -> new AccountNotFoundException(login));
-		account.addFavorite(postId);
+		account.addFavorite(postId, serviceName);
 		repository.save(account);
 	}
 
 	@Override
-	public void addActivity(String login, String postId) {
+	public void addActivity(String login, String postId, String serviceName) {
 		Account account = repository.findById(login).orElseThrow(() -> new AccountNotFoundException(login));
-		account.addActivity(postId);
+		account.addActivity(postId, serviceName);
 		repository.save(account);
 	}
 
 	@Override
-	public void removeFavorite(String login, String postId) {
+	public void removeFavorite(String login, String postId, String serviceName) {
 		Account account = repository.findById(login).orElseThrow(() -> new AccountNotFoundException(login));
-		account.removeFavorite(postId);
+		account.removeFavorite(postId, serviceName);
 		repository.save(account);
 	}
 
 	@Override
-	public void removeActivity(String login, String postId) {
+	public void removeActivity(String login, String postId, String serviceName) {
 		Account account = repository.findById(login).orElseThrow(() -> new AccountNotFoundException(login));
-		account.removeActivity(postId);
+		account.removeActivity(postId, serviceName);
 		repository.save(account);
 	}
 
 	@Override
 	public Set<String> getUserDate(String login, boolean dataType) {
-		Account account = repository.findById(login).orElseThrow(() -> new AccountNotFoundException(login));
-		if (dataType) {
-			return account.getActivities();
-		} else {
-			return account.getFavorites();
-		}
+//		Account account = repository.findById(login).orElseThrow(() -> new AccountNotFoundException(login));
+//		if (dataType) {
+//			return account.getActivities();
+//		} else {
+//			return account.getFavorites();
+//		}
+		//TODO
+		return null;
 	}
 
 }

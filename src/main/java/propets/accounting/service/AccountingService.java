@@ -26,13 +26,13 @@ public interface AccountingService {
 	
 	boolean blockUser(String login, String blockStatus);
 	
-	void addFavorite(String login, String postId);
+	void addFavorite(String login, String postId, String serviceName);
 	
-	void addActivity(String login, String postId);
+	void addActivity(String login, String postId, String serviceName);
 	
-	void removeFavorite(String login, String postId);
+	void removeFavorite(String login, String postId, String serviceName);
 	
-	void removeActivity(String login, String postId);
+	void removeActivity(String login, String postId, String serviceName);
 	
 	Set<String> getUserDate(String login, boolean dataType);
 	
