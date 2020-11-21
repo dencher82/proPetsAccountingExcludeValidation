@@ -38,21 +38,4 @@ public class CORSFilter implements Filter {
 		chain.doFilter(request, res);
 	}
 
-//	@Override
-//	public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain chain)
-//			throws IOException, ServletException {
-//		HttpServletRequest request = (HttpServletRequest) servletRequest;
-//		HttpServletResponse response = (HttpServletResponse) servletResponse;
-//		response.addHeader("Access-Control-Allow-Origin", "*");
-//		response.addHeader("Access-Control-Allow-Methods", "GET, OPTIONS, HEAD, PUT, POST, DELETE");
-//		response.addHeader("Access-Control-Allow-Headers", "Content-Type, Authorization, X-Token, X-ServiceName");
-//		response.addHeader("Access-Control-Expose-Headers", "*");
-//		if (request.getMethod().equalsIgnoreCase("OPTIONS")) {
-//			response.setStatus(HttpServletResponse.SC_ACCEPTED);
-//			return;
-//		}
-//		chain.doFilter(request, servletResponse);
-//
-//	}
-
 }
