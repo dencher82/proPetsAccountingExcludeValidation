@@ -19,10 +19,10 @@ import lombok.Setter;
 
 @NoArgsConstructor
 @Getter
-@EqualsAndHashCode(of = {"email"})
+@EqualsAndHashCode(of = { "email" })
 @Document(collection = "accounts")
-public class Account implements Serializable{
-	
+public class Account implements Serializable {
+
 	/**
 	 * 
 	 */
@@ -30,7 +30,7 @@ public class Account implements Serializable{
 
 	@Value("${block.period}")
 	int blockPeriod;
-	
+
 	@Id
 	String email;
 	@Setter
@@ -46,16 +46,16 @@ public class Account implements Serializable{
 	Map<String, Set<String>> activities = new HashMap<>();
 	boolean flBlocked;
 	long timeUnblock;
-	
+
 	public Account(String email, String name) {
 		this.email = email;
 		this.name = name;
 	}
-	
+
 	public boolean addRole(String role) {
 		return roles.add(role.toUpperCase());
 	}
-	
+
 	public boolean removeRole(String role) {
 		return roles.remove(role.toUpperCase());
 	}
@@ -66,22 +66,26 @@ public class Account implements Serializable{
 		}
 		favourites.get(serviceName).add(postId);
 	}
-	
+
 	public void removeFavorite(String postId, String serviceName) {
-		favourites.get(serviceName).remove(postId);
+		if (favourites.containsKey(serviceName)) {
+			favourites.get(serviceName).remove(postId);
+		}
 	}
-	
+
 	public void addActivity(String postId, String serviceName) {
 		if (!activities.containsKey(serviceName)) {
 			activities.put(serviceName, new HashSet<String>());
 		}
 		activities.get(serviceName).add(postId);
 	}
-	
+
 	public void removeActivity(String postId, String serviceName) {
-		activities.get(serviceName).remove(postId);
+		if (activities.containsKey(serviceName)) {
+			activities.get(serviceName).remove(postId);
+		}
 	}
-	
+
 	public boolean blockAccount(String blockStatus) {
 		if ("true".equalsIgnoreCase(blockStatus)) {
 			flBlocked = true;
@@ -93,5 +97,5 @@ public class Account implements Serializable{
 		}
 		return false;
 	}
-	
+
 }

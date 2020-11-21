@@ -1,5 +1,6 @@
 package propets.accounting.service;
 
+import java.util.Map;
 import java.util.Set;
 
 import org.springframework.http.ResponseEntity;
@@ -34,6 +35,6 @@ public interface AccountingService {
 	
 	void removeActivity(String login, String postId, String serviceName);
 	
-	Set<String> getUserDate(String login, boolean dataType);
+	Map<String, Set<String>> getUserDate(String login, boolean dataType);
 	
 }

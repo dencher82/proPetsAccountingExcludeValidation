@@ -1,6 +1,8 @@
 package propets.accounting.controller;
 
 import java.security.Principal;
+import java.util.Map;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -90,7 +92,7 @@ public class AccountingController {
 	}
 	
 	@GetMapping("/{login}")
-	public Iterable<String> getUserDate(@PathVariable String login, @RequestParam(value = "dataType") boolean dataType) {
+	public Map<String, Set<String>> getUserDate(@PathVariable String login, @RequestParam(value = "dataType") boolean dataType) {
 		return accountingService.getUserDate(login, dataType);
 	}
 	

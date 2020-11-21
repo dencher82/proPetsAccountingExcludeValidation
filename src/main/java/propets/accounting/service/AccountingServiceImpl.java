@@ -1,5 +1,6 @@
 package propets.accounting.service;
 
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.validator.routines.EmailValidator;
@@ -56,7 +57,7 @@ public class AccountingServiceImpl implements AccountingService {
 		account.setAvatar(defaultAvatar);
 		account.addRole(defaultRole);
 		repository.save(account);
-		AccountDto accountDto = mapper.map(account, AccountDto.class);	
+		AccountDto accountDto = mapper.map(account, AccountDto.class);
 		String token;
 		try {
 			token = securityService.createToken(accountCreateDto);
@@ -187,15 +188,13 @@ public class AccountingServiceImpl implements AccountingService {
 	}
 
 	@Override
-	public Set<String> getUserDate(String login, boolean dataType) {
-//		Account account = repository.findById(login).orElseThrow(() -> new AccountNotFoundException(login));
-//		if (dataType) {
-//			return account.getActivities();
-//		} else {
-//			return account.getFavorites();
-//		}
-		//TODO
-		return null;
+	public Map<String, Set<String>> getUserDate(String login, boolean dataType) {
+		Account account = repository.findById(login).orElseThrow(() -> new AccountNotFoundException(login));
+		if (dataType) {
+			return account.getActivities();
+		} else {
+			return account.getFavourites();
+		}
 	}
 
 }
