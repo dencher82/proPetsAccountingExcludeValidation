@@ -32,9 +32,9 @@ public class AccountingConfiguration {
 		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
 		CorsConfiguration config = new CorsConfiguration();
 		config.setAllowCredentials(true);
-		config.addAllowedOrigin("http://domain1.com");
-		config.addAllowedHeader("*");
-		config.addAllowedMethod("*");
+		config.addAllowedOrigin("*");
+		config.addAllowedHeader("Content-Type, Authorization, X-Token, X-ServiceName");
+		config.addAllowedMethod("GET, OPTIONS, HEAD, PUT, POST, DELETE");
 		source.registerCorsConfiguration("/**", config);
 		FilterRegistrationBean<CorsFilter> bean = new FilterRegistrationBean<CorsFilter>(new CorsFilter(source));
 		bean.setOrder(0);
