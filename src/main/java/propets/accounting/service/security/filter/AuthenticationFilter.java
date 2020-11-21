@@ -75,7 +75,7 @@ public class AuthenticationFilter implements Filter {
 					try {
 						RequestEntity<String> requestEntity = new RequestEntity<String>(headers, HttpMethod.GET, new URI(validationServiceUrl + "/token/validation"));
 						ResponseEntity<String> responseEntity = restTemplate.exchange(requestEntity, String.class);
-						request = new WrapperRequest(request, responseEntity.getBody());
+						request = new WrapperRequest(request, responseEntity.getHeaders().getFirst(LOGIN_HEADER));
 						response.setHeader(TOKEN_HEADER, responseEntity.getHeaders().getFirst(TOKEN_HEADER));
 					} catch (Exception e) {
 						e.printStackTrace();
