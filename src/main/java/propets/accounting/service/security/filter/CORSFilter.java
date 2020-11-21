@@ -15,7 +15,7 @@ import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 @Component
-@Order(5)
+@Order(1)
 public class CORSFilter implements Filter {
 
 	@Value("${origin.url}")
@@ -45,7 +45,7 @@ public class CORSFilter implements Filter {
 		response.addHeader("Access-Control-Allow-Methods", "GET, OPTIONS, HEAD, PUT, POST, DELETE");
 		response.addHeader("Access-Control-Allow-Headers", "Content-Type, Authorization, X-Token, X-ServiceName");
 		response.addHeader("Access-Control-Expose-Headers", "*");
-		if (request.getMethod().equals("OPTIONS")) {
+		if (request.getMethod().equalsIgnoreCase("OPTIONS")) {
 			response.setStatus(HttpServletResponse.SC_ACCEPTED);
 			return;
 		}

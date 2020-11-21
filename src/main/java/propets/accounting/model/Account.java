@@ -42,7 +42,7 @@ public class Account implements Serializable{
 	@Setter
 	String phone;
 	Set<String> roles = new HashSet<>();
-	Map<String, Set<String>> favorites = new HashMap<>();
+	Map<String, Set<String>> favourites = new HashMap<>();
 	Map<String, Set<String>> activities = new HashMap<>();
 	boolean flBlocked;
 	long timeUnblock;
@@ -61,14 +61,14 @@ public class Account implements Serializable{
 	}
 
 	public void addFavorite(String postId, String serviceName) {
-		if (!favorites.containsKey(serviceName)) {
-			favorites.put(serviceName, new HashSet<String>());
+		if (!favourites.containsKey(serviceName)) {
+			favourites.put(serviceName, new HashSet<String>());
 		}
-		favorites.get(serviceName).add(postId);
+		favourites.get(serviceName).add(postId);
 	}
 	
 	public void removeFavorite(String postId, String serviceName) {
-		favorites.get(serviceName).remove(postId);
+		favourites.get(serviceName).remove(postId);
 	}
 	
 	public void addActivity(String postId, String serviceName) {

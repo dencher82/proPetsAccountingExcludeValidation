@@ -17,7 +17,6 @@ import org.springframework.web.client.RestTemplate;
 
 import propets.accounting.dao.AccountingRepository;
 import propets.accounting.dto.AccountCreateDto;
-import propets.accounting.dto.AccountLoginDto;
 import propets.accounting.dto.exception.AccountNotFoundException;
 import propets.accounting.dto.exception.TokenValidateException;
 import propets.accounting.dto.exception.UnauthorizedException;
@@ -37,13 +36,23 @@ public class AccountingSecurityImpl implements AccountingSecurity {
 
 	@Override
 	public String getLogin(String token) {
-		AccountLoginDto accountLoginDto = tokenDecode(token);
-		Account account = repository.findById(accountLoginDto.getLogin())
-				.orElseThrow(() -> new AccountNotFoundException(accountLoginDto.getLogin()));
-		if (!BCrypt.checkpw(accountLoginDto.getPassword(), account.getPassword())) {
+		String[] credentials = tokenDecode(token);
+		Account account = repository.findById(credentials[0])
+				.orElseThrow(() -> new AccountNotFoundException(credentials[0]));
+		if (!BCrypt.checkpw(credentials[1], account.getPassword())) {
 			throw new UnauthorizedException();
 		}
 		return account.getEmail();
+	}
+	
+	private String[] tokenDecode(String token) {
+		try {
+			String[] credentials = token.split(" ");
+			String credential = new String(Base64.getDecoder().decode(credentials[1]));
+			return credential.split(":");
+		} catch (Exception e) {
+			throw new TokenValidateException();
+		}
 	}
 	
 	@Override
@@ -67,15 +76,5 @@ public class AccountingSecurityImpl implements AccountingSecurity {
 		return "Basic " + encodedCredentials;
 	}
 
-	private AccountLoginDto tokenDecode(String token) {
-		try {
-			String[] credentials = token.split(" ");
-			String credential = new String(Base64.getDecoder().decode(credentials[1]));
-			credentials = credential.split(":");
-			return new AccountLoginDto(credentials[0], credentials[1]);
-		} catch (Exception e) {
-			throw new TokenValidateException();
-		}
-	}
 	
 }
