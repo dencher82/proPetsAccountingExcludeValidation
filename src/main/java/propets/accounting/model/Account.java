@@ -93,6 +93,7 @@ public class Account implements Serializable {
 			return true;
 		} else if ("false".equalsIgnoreCase(blockStatus)) {
 			flBlocked = false;
+			timeUnblock = 0;
 			return true;
 		}
 		return false;
