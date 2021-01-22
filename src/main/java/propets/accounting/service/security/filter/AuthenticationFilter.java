@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -30,6 +31,7 @@ import propets.accounting.dto.exception.AccountNotFoundException;
 import propets.accounting.dto.exception.TokenExpiredException;
 import propets.accounting.service.security.AccountingSecurity;
 
+@RefreshScope
 @Service
 @Order(10)
 public class AuthenticationFilter implements Filter {
