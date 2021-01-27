@@ -1,7 +1,6 @@
-package propets.accounting.service.security.filter;
+package propets.accounting.filters;
 
 import java.io.IOException;
-import java.net.URI;
 import java.security.Principal;
 
 import javax.servlet.Filter;
@@ -14,39 +13,32 @@ import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.core.annotation.Order;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
 import static propets.accounting.configuration.Constants.*;
 
+import propets.accounting.configuration.ValidationFeignProxy;
 import propets.accounting.dao.AccountingRepository;
 import propets.accounting.dto.exception.AccountNotFoundException;
 import propets.accounting.dto.exception.TokenExpiredException;
-import propets.accounting.service.security.AccountingSecurity;
+import propets.accounting.security.AccountingSecurity;
 
 @RefreshScope
 @Service
 @Order(10)
 public class AuthenticationFilter implements Filter {
 	
-	@Value("${validation.url}")
-	String validationServiceUrl;
+	@Autowired
+	ValidationFeignProxy feignProxy;
 
 	@Autowired
 	AccountingSecurity securityService;
 
 	@Autowired
 	AccountingRepository repository;
-	
-	@Autowired
-	RestTemplate restTemplate;
 
 	@Override
 	public void doFilter(ServletRequest req, ServletResponse resp, FilterChain chain)
@@ -58,11 +50,8 @@ public class AuthenticationFilter implements Filter {
 			try {
 				if ("/account/en/v1/login".equals(path)) {
 					String base64token = request.getHeader("Authorization");
-					HttpHeaders headers = new HttpHeaders();
-					headers.add("Authorization", base64token);
 					try {
-						RequestEntity<String> requestEntity = new RequestEntity<String>(headers, HttpMethod.GET, new URI(validationServiceUrl + "/token/create"));
-						ResponseEntity<String> responseEntity = restTemplate.exchange(requestEntity, String.class);
+						ResponseEntity<String> responseEntity = feignProxy.createToken(base64token);
 						request = new WrapperRequest(request, securityService.getLogin(base64token));
 						response.setHeader(TOKEN_HEADER, responseEntity.getHeaders().getFirst(TOKEN_HEADER));
 					} catch (Exception e) {
@@ -72,11 +61,8 @@ public class AuthenticationFilter implements Filter {
 					}					
 				} else {
 					String xToken = request.getHeader(TOKEN_HEADER);
-					HttpHeaders headers = new HttpHeaders();
-					headers.add(TOKEN_HEADER, xToken);
 					try {
-						RequestEntity<String> requestEntity = new RequestEntity<String>(headers, HttpMethod.GET, new URI(validationServiceUrl + "/token/validation"));
-						ResponseEntity<String> responseEntity = restTemplate.exchange(requestEntity, String.class);
+						ResponseEntity<String> responseEntity = feignProxy.validateToken(xToken);
 						request = new WrapperRequest(request, responseEntity.getHeaders().getFirst(LOGIN_HEADER));
 						response.setHeader(TOKEN_HEADER, responseEntity.getHeaders().getFirst(TOKEN_HEADER));
 					} catch (Exception e) {

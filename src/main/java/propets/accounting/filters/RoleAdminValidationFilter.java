@@ -1,4 +1,4 @@
-package propets.accounting.service.security.filter;
+package propets.accounting.filters;
 
 import java.io.IOException;
 import java.security.Principal;
@@ -19,9 +19,9 @@ import propets.accounting.dao.AccountingRepository;
 import propets.accounting.model.Account;
 
 @Service
-@Order(40)
-public class RolesValidationFilter implements Filter {
-
+@Order(20)
+public class RoleAdminValidationFilter implements Filter {
+	
 	@Autowired
 	AccountingRepository repository;
 
@@ -35,7 +35,7 @@ public class RolesValidationFilter implements Filter {
 				Principal principal = request.getUserPrincipal();
 				String login = principal.getName();
 				Account account = repository.findById(login).orElse(null);
-				if (!account.getRoles().stream().anyMatch(r -> "ADMIN".equals(r) || "MODERATOR".equals(r))) {
+				if (!account.getRoles().stream().anyMatch(r -> "ADMIN".equals(r))) {
 					response.sendError(403);
 					return;
 				}
@@ -49,7 +49,7 @@ public class RolesValidationFilter implements Filter {
 	}
 
 	private boolean checkPathAndMethod(String path, String method) {
-		boolean res = path.matches("/account/en/v1/[\\w.%+-]+@[\\w.-]+\\.[a-zA-Z]{2,6}+/block/[a-zA-Z]+/?");
+		boolean res = path.matches("/account/en/v1/[\\w.%+-]+@[\\w.-]+\\.[a-zA-Z]{2,6}+/role/[a-zA-Z]+/?");
 		return res;
 	}
 

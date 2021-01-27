@@ -23,7 +23,7 @@ import propets.accounting.dto.exception.AccountNotFoundException;
 import propets.accounting.dto.exception.BadRequestException;
 import propets.accounting.dto.exception.TokenValidateException;
 import propets.accounting.model.Account;
-import propets.accounting.service.security.AccountingSecurity;
+import propets.accounting.security.AccountingSecurity;
 
 @Service
 public class AccountingServiceImpl implements AccountingService {

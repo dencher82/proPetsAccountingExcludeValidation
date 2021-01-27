@@ -1,4 +1,4 @@
-package propets.accounting.service.security;
+package propets.accounting.security;
 
 import propets.accounting.dto.AccountCreateDto;
 

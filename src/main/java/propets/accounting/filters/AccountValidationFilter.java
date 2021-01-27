@@ -1,4 +1,4 @@
-package propets.accounting.service.security.filter;
+package propets.accounting.filters;
 
 import java.io.IOException;
 import java.security.Principal;
